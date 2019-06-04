@@ -38,7 +38,7 @@ if is_admin(): #If Admin - Run this->
         last_size += 1
         print("---------------------------------------------------------------------------------\n")
 
-else: #If not admin - Run as admin  #Re-run the program with admin rights
+else: #If not admin - Run as admin  #Re-run the program with admin rights#
 
    ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, __file__, None, 1)
 
