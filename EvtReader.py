@@ -33,3 +33,5 @@ def GetEvents():
         #Now need to move this slave using protoBuf #ToDo
         last_size += 1
         print("---------------------------------------------------------------------------------\n")
+
+        #Testing
