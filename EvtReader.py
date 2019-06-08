@@ -16,22 +16,22 @@ def GetEvents():
         while curr_size == last_size:  # Get only new logs+
             time.sleep(1)
             curr_size = win32evtlog.GetNumberOfEventLogRecords(hand)
-        events = win32evtlog.ReadEventLog(hand, flags, 0)
-        if events:
-            for event in events:
-                # print("Event Category: " ,event.EventCategory)
-                # print("Time Generated: ", event.TimeGenerated)
-                # print("Source Name: " , event.SourceName)
-                # print("Event ID: " , event.EventID)
-                # print("Event Type: " , event.EventType)
-                data = event.StringInserts
-                if data:
-                    data_content = ""
-                    for msg in data:
-                        data_content += msg
-        slave = Evt(event.EventID,event.TimeGenerated,event.EventType,event.EventCategory,event.SourceName,data_content)
+        events = win32evtlog.ReadEventLog(hand, flags, last_size)
+        for event in events:
+            print("Event Category: " ,event.EventCategory)
+            print("Time Generated: ", event.TimeGenerated)
+            print("Source Name: " , event.SourceName)
+            print("Event ID: " , event.EventID)
+            print("Event Type: " , event.EventType)
+            # data = event.StringInserts
+            # if data:
+            #     data_content = ""
+            #     for msg in data:
+            #         data_content += msg
+        # slave = Evt(event.EventID,event.TimeGenerated,event.EventType,event.EventCategory,event.SourceName,data_content)
         #Now need to move this slave using protoBuf #ToDo
         last_size += 1
         print("---------------------------------------------------------------------------------\n")
+
 
         #Testing
