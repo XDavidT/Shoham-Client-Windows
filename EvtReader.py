@@ -1,11 +1,10 @@
 import win32evtlog # requires pywin32 pre-installed
 import time        # Must have to wait
 
+server = "localhost"  # name of the target computer to get event logs
+logtype = "Security"  # 'Application' # 'Security' # 'System'
 
 def GetEvents():
-    server = "localhost"  # name of the target computer to get event logs
-    logtype = "Security"  # 'Application' # 'Security' # 'System'
-
     hand = win32evtlog.OpenEventLog(server, logtype)  # Handle the connection
     flags = win32evtlog.EVENTLOG_FORWARDS_READ | win32evtlog.EVENTLOG_SEQUENTIAL_READ
     last_check = win32evtlog.GetNumberOfEventLogRecords(hand)
@@ -34,7 +33,5 @@ def GetEvents():
 
 
 def clearEvt():
-    server = "localhost"  # name of the target computer to get event logs
-    logtype = "Security"  # 'Application' # 'Security' # 'System'
     hand = win32evtlog.OpenEventLog(server, logtype)  # Handle the connection
     win32evtlog.ClearEventLog(hand,None)
