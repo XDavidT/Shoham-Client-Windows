@@ -9,6 +9,7 @@ def is_admin(): #Run ad admin
 
 #Start from here
 if is_admin(): #If Admin - Run this->
+    clearEvt()
     GetEvents() #Getting Events to class format --Need to brodcast using protobuf
 
 else: #If not admin - Run as admin  #Re-run the program with admin rights

@@ -33,3 +33,8 @@ def GetEvents():
         #Now need to move this slave using protoBuf
 
 
+def clearEvt():
+    server = "localhost"  # name of the target computer to get event logs
+    logtype = "Security"  # 'Application' # 'Security' # 'System'
+    hand = win32evtlog.OpenEventLog(server, logtype)  # Handle the connection
+    win32evtlog.ClearEventLog(hand,None)
