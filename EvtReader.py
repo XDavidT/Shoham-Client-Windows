@@ -3,8 +3,9 @@ import evtmanager_pb2
 
 server = "localhost"  # name of the target computer to get event logs
 logtype = "Security"  # 'Application' # 'Security' # 'System'
+                      #Log type must come from server as array
 
-def GetEvents(evtMgr):
+def GetEvents(evtMgr, logtype):
     hand = win32evtlog.OpenEventLog(server, logtype)  # Handle the connection
     flags = win32evtlog.EVENTLOG_FORWARDS_READ | win32evtlog.EVENTLOG_SEQUENTIAL_READ
     last_check = win32evtlog.GetNumberOfEventLogRecords(hand)
@@ -34,9 +35,9 @@ def GetEvents(evtMgr):
 
 
 evtMgr = evtmanager_pb2.evtMgr()
-GetEvents(evtMgr)
+GetEvents(evtMgr,logtype)
 
 
 def clearEvt():
     hand = win32evtlog.OpenEventLog(server, logtype)  # Handle the connection
-    win32evtlog.ClearEventLog(hand,None)
+    win32evtlog.ClearEventLog(hand, None)
