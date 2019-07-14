@@ -1,0 +1,19 @@
+syntax = "proto3";
+import "google/protobuf/timestamp.proto";
+
+
+    // slave = Evt(event.EventID,event.TimeGenerated,event.EventType,event.EventCategory,event.SourceName,data_content)
+message evtMgr {
+  int64 id = 1;
+  google.protobuf.Timestamp time = 2;  // Unique ID number for this person.
+  int32 type = 3;
+  string src = 4;
+  int32 cat = 5;
+
+  message Data {
+    string data = 1;
+  }
+  repeated Data dataList = 6; //data content
+}
+
+//protoc --proto_path=ProtoBuf --python_out=./ ProtoBuf/evtmanager.proto
