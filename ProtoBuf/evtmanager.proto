@@ -17,3 +17,4 @@ message evtMgr {
 }
 
 //protoc --proto_path=ProtoBuf --python_out=./ ProtoBuf/evtmanager.proto
+//Added to github

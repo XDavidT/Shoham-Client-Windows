@@ -25,7 +25,6 @@ def GetEvents(evtMgr):
                         for msg in data:
                             data_input = evtMgr.dataList.add()
                             data_input.data = msg
-                    print(evtMgr.SerializeToString())
                     print("---------------------------------------------------------------------------------\n")
                 last_check = curr_check
 
@@ -36,15 +35,6 @@ def GetEvents(evtMgr):
 
 evtMgr = evtmanager_pb2.evtMgr()
 GetEvents(evtMgr)
-
-
-
-
-
-
-
-
-
 
 
 def clearEvt():
