@@ -1,6 +1,6 @@
 import ctypes, sys  # Must have to run as Administrator
 import servicemanager, win32event, win32service,win32serviceutil
-import _thread
+import threading
 from EvtReader import *
 import evtmanager_pb2
 SIEM_NAME = "My Service Name"
@@ -32,17 +32,24 @@ class SiemService(win32serviceutil.ServiceFramework):
         win32event.SetEvent(self.hWaitStop)
 
     def SvcDoRun(self):
-        # Start socket
-        clearEvt()  # Clear events in start - function located in 'EvtReader'
+        clearEvt()  # Clear events in start
+        threads = list()    # Must declare to use
         rc = None
-        while rc != win32event.WAIT_OBJECT_0:
-            for srv_name in cat_to_run:
-                try:
-                    _thread.start_new_thread(GetEvents(evtMgr,srv_name, self.hWaitStop))
-                except:
-                    Mbox(SIEM_NAME+' Error', 'Fail to start thread', 0)
+        # Start socket
+        for srv_name in cat_to_run:
+            try:                            # If success start 3 threads into a list
+                curr_thr = threading.Thread(target=GetEvents,args=(evtMgr,srv_name))
+                threads.append(curr_thr)
+                curr_thr.start()
+            except:                         # When it fail, pop-up massage will display
+                Mbox(SIEM_NAME+' Error', 'Fail to start thread', 0)
+
+        while(rc != win32event.WAIT_OBJECT_0):  # Wait until the "Stop"
             rc = win32event.WaitForSingleObject(self.hWaitStop, 5000)
-            # Stop socket
+
+        for thread in threads:  # If service was stopped, close all threads
+            thread.join()
+        # Stop socket
 
 #-------------------------------------------------------------------------------------------------------------------#
 
