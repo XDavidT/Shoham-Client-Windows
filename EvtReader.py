@@ -1,12 +1,10 @@
 import win32evtlog # requires pywin32 pre-installed
 import servicemanager, win32event, win32service,win32serviceutil
 
-
-server = "localhost"  # name of the target computer to get event logs
-logtype = "Security"  # 'Application' # 'Security' # 'System'
-                      #Log type must come from server as array
+server = "localhost"
 
 def GetEvents(evtMgr, logtype):
+    clearEvt(logtype)
     hand = win32evtlog.OpenEventLog(server, logtype)  # Handle the connection
     flags = win32evtlog.EVENTLOG_FORWARDS_READ | win32evtlog.EVENTLOG_SEQUENTIAL_READ
     last_check = win32evtlog.GetNumberOfEventLogRecords(hand)
@@ -36,11 +34,6 @@ def GetEvents(evtMgr, logtype):
         # slave = Evt(event.EventID,event.TimeGenerated,event.EventType,event.EventCategory,event.SourceName,data_content)
         #Now need to move this slave using protoBuf
 
-
-
-
-
-
-def clearEvt():
+def clearEvt(logtype):
     hand = win32evtlog.OpenEventLog(server, logtype)  # Handle the connection
     win32evtlog.ClearEventLog(hand, None)

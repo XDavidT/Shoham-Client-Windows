@@ -1,6 +1,6 @@
 import ctypes, sys  # Must have to run as Administrator
 import servicemanager, win32event, win32service,win32serviceutil
-import threading
+import threading, time
 from EvtReader import *
 import evtmanager_pb2
 SIEM_NAME = "My Service Name"
@@ -26,35 +26,41 @@ class SiemService(win32serviceutil.ServiceFramework):
     def __init__(self, args):
         win32serviceutil.ServiceFramework.__init__(self, args)
         self.hWaitStop = win32event.CreateEvent(None, 0, 0, None)
+        self.keepAlive = False
+        print("Service creat !")
 
     def SvcStop(self):
         self.ReportServiceStatus(win32service.SERVICE_STOP_PENDING)
         win32event.SetEvent(self.hWaitStop)
+        self.keepAlive = False
 
     def SvcDoRun(self):
-        clearEvt()  # Clear events in start
+        self.keepAlive = True
+        cat_to_run = ['Security', 'System']  # need to get from outside
+        evtMgr = evtmanager_pb2.evtMgr()
         threads = list()    # Must declare to use
-        rc = None
         # Start socket
-        for srv_name in cat_to_run:
-            try:                            # If success start 3 threads into a list
+        try:
+            for srv_name in cat_to_run:
                 curr_thr = threading.Thread(target=GetEvents,args=(evtMgr,srv_name))
                 threads.append(curr_thr)
                 curr_thr.start()
-            except:                         # When it fail, pop-up massage will display
-                Mbox(SIEM_NAME+' Error', 'Fail to start thread', 0)
-
-        while(rc != win32event.WAIT_OBJECT_0):  # Wait until the "Stop"
-            rc = win32event.WaitForSingleObject(self.hWaitStop, 5000)
-
+        except:  # When it fail, pop-up massage will
+            Mbox(SIEM_NAME + ' Error', 'Fail to start thread', 0)
+        while self.keepAlive:  # Wait until the "Stop"
+            time.sleep(5)
+        print("Stop flag !--> Stopping")
         for thread in threads:  # If service was stopped, close all threads
-            thread.join()
+            thread.join(1)
         # Stop socket
+# + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +#
+
+
 
 #-------------------------------------------------------------------------------------------------------------------#
 
-cat_to_run = ['Security','System']
-evtMgr = evtmanager_pb2.evtMgr()
+
+
 
 # Program Declaration
 # Step 1 - Start from main
