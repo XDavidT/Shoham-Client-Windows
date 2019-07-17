@@ -1,11 +1,11 @@
 import ctypes, sys  # Must have to run as Administrator
 import servicemanager, win32event, win32service,win32serviceutil
-import threading, time
+import threading
 from EvtReader import *
 import evtmanager_pb2
 SIEM_NAME = "My Service Name"
 SIEM_SRV_NAME = "MyServiceName"
-
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
 # Function Declaration
 
 # Run ad admin
@@ -26,16 +26,14 @@ class SiemService(win32serviceutil.ServiceFramework):
     def __init__(self, args):
         win32serviceutil.ServiceFramework.__init__(self, args)
         self.hWaitStop = win32event.CreateEvent(None, 0, 0, None)
-        self.keepAlive = False
         print("Service creat !")
 
     def SvcStop(self):
         self.ReportServiceStatus(win32service.SERVICE_STOP_PENDING)
         win32event.SetEvent(self.hWaitStop)
-        self.keepAlive = False
 
     def SvcDoRun(self):
-        self.keepAlive = True
+        self.ReportServiceStatus(win32service.SERVICE_START_PENDING)
         cat_to_run = ['Security', 'System']  # need to get from outside
         evtMgr = evtmanager_pb2.evtMgr()
         threads = list()    # Must declare to use
@@ -47,19 +45,15 @@ class SiemService(win32serviceutil.ServiceFramework):
                 curr_thr.start()
         except:  # When it fail, pop-up massage will
             Mbox(SIEM_NAME + ' Error', 'Fail to start thread', 0)
-        while self.keepAlive:  # Wait until the "Stop"
-            time.sleep(5)
-        print("Stop flag !--> Stopping")
+        rc = None
+        while rc != win32event.WAIT_OBJECT_0:  # Wait until the "Stop"
+            rc = win32event.WaitForSingleObject(self.hWaitStop, 5000)
         for thread in threads:  # If service was stopped, close all threads
             thread.join(1)
         # Stop socket
+
+
 # + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +#
-
-
-
-#-------------------------------------------------------------------------------------------------------------------#
-
-
 
 
 # Program Declaration
