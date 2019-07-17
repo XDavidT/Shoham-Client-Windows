@@ -59,15 +59,17 @@ evtMgr = evtmanager_pb2.evtMgr()
 # Program Declaration
 # Step 1 - Start from main
 if __name__ == '__main__':
-    # Step 2 - check user is Admin
-    if is_admin():  # calling function to check OR get admin access
-        # Step 3 - Start the service
-        servicemanager.Initialize()
-        servicemanager.PrepareToHostSingle(SiemService)
-        servicemanager.StartServiceCtrlDispatcher()
+    if len(sys.argv) == 1:
+        # Step 2 - check user is Admin
+        if is_admin():  # calling function to check OR get admin access
+            # Step 3 - Start the service
+            servicemanager.Initialize()
+            servicemanager.PrepareToHostSingle(SiemService)
+            servicemanager.StartServiceCtrlDispatcher()
 
-
-    else:  # If not admin - Run as admin  #Re-run the program with admin rights
-        ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, __file__, None, 1)
+        else:  # If not admin - Run as admin  #Re-run the program with admin rights
+            ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, __file__, None, 1)
+    else:
+        win32serviceutil.HandleCommandLine(SiemService)
 else:
     win32serviceutil.HandleCommandLine(SiemService)
