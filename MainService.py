@@ -15,10 +15,6 @@ def is_admin():
     except:
         return False
 
-# Pop windows Massage box
-def Mbox(title, text, style):
-    return ctypes.windll.user32.MessageBoxW(0, text, title, style)
-
 class SiemService(win32serviceutil.ServiceFramework):
     _svc_name_ = SIEM_SRV_NAME
     _svc_display_name_ = SIEM_NAME
@@ -31,10 +27,11 @@ class SiemService(win32serviceutil.ServiceFramework):
 
     def SvcStop(self):
         self.alive = False
-        self.ReportServiceStatus(win32service.SERVICE_STOP_PENDING)
+        self.ReportServiceStatus(win32service.SERVICE_STOP_PENDING)     # Status: Service Stopped
         win32event.SetEvent(self.hWaitStop)
 
     def SvcDoRun(self):
+        self.ReportServiceStatus(win32service.SERVICE_START_PENDING)    # Status: Service Starting.....
         self.alive = True
         servicemanager.LogMsg(servicemanager.EVENTLOG_INFORMATION_TYPE,
                               servicemanager.PYS_SERVICE_STARTED,
@@ -49,7 +46,8 @@ class SiemService(win32serviceutil.ServiceFramework):
                 threads.append(curr_thr)
                 curr_thr.start()
         except:  # When it fail, pop-up massage will
-            Mbox(SIEM_NAME + ' Error', 'Fail to start thread', 0)
+            print("error in thread")
+        self.ReportServiceStatus(win32service.SERVICE_RUNNING)          # Status: Service Running
         rc = None
         while rc != win32event.WAIT_OBJECT_0:  # Wait until the "Stop"
             rc = win32event.WaitForSingleObject(self.hWaitStop, 5000)
