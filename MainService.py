@@ -3,7 +3,6 @@ import servicemanager, win32event, win32service,win32serviceutil
 import threading
 import win32evtlog # requires pywin32 pre-installed
 import evtmanager_pb2
-import time
 SIEM_NAME = "My Service Name"
 SIEM_SRV_NAME = "MyServiceName"
 
@@ -37,7 +36,9 @@ class SiemService(win32serviceutil.ServiceFramework):
 
     def SvcDoRun(self):
         self.alive = True
-        self.ReportServiceStatus(win32service.SERVICE_START_PENDING)
+        servicemanager.LogMsg(servicemanager.EVENTLOG_INFORMATION_TYPE,
+                              servicemanager.PYS_SERVICE_STARTED,
+                              (self._svc_name_, ''))
         cat_to_run = ['Security', 'System']  # need to get from outside
         evtMgr = evtmanager_pb2.evtMgr()
         threads = list()    # Must declare to use
@@ -82,6 +83,7 @@ class SiemService(win32serviceutil.ServiceFramework):
                     last_check = curr_check
 
 
+
     def clearEvt(self,log_type):
         hand = win32evtlog.OpenEventLog("localhost", log_type)  # Handle the Event Viewer
         win32evtlog.ClearEventLog(hand, None)
@@ -91,7 +93,7 @@ class SiemService(win32serviceutil.ServiceFramework):
 
 
 # + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +#
-# pyinstaller -F --hidden-import=win32timezone --name=MyService MainService.py EvtReader.py evtmanager_pb2.py
+# pyinstaller -F --hidden-import=win32timezone --name=MyService MainService.py evtmanager_pb2.py
 
 # Program Declaration
 # Step 1 - Start from main
