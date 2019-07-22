@@ -1,7 +1,7 @@
 import ctypes, sys  # Must have to run as Administrator
-import servicemanager, win32event, win32service,win32serviceutil, socket,getpass
+import servicemanager, win32event, win32service,win32serviceutil,win32evtlog
 import threading
-import win32evtlog # requires pywin32 pre-installed
+import socket,getpass,platform
 import evtmanager_pb2
 SIEM_NAME = "My Service Name"
 SIEM_SRV_NAME = "MyServiceName"
@@ -62,8 +62,9 @@ class SiemService(win32serviceutil.ServiceFramework):
         flags = win32evtlog.EVENTLOG_FORWARDS_READ | win32evtlog.EVENTLOG_SEQUENTIAL_READ
         last_check = win32evtlog.GetNumberOfEventLogRecords(hand)
 
-        evtmgr.hostname = socket.gethostname()
-        evtmgr.username = getpass.getuser()
+        evtmgr.hostname = socket.gethostname()  # Using Socket we can know the PC name
+        evtmgr.username = getpass.getuser()     # Using getpass we can know what user is current using
+        evtmgr.os = platform.system()           # Using platform to get OS brand
 
         # This while must stop when service is stopped #
         while self.keepAlive():
