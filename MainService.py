@@ -1,5 +1,5 @@
 import ctypes, sys  # Must have to run as Administrator
-import servicemanager, win32event, win32service,win32serviceutil
+import servicemanager, win32event, win32service,win32serviceutil, socket,getpass
 import threading
 import win32evtlog # requires pywin32 pre-installed
 import evtmanager_pb2
@@ -62,6 +62,9 @@ class SiemService(win32serviceutil.ServiceFramework):
         flags = win32evtlog.EVENTLOG_FORWARDS_READ | win32evtlog.EVENTLOG_SEQUENTIAL_READ
         last_check = win32evtlog.GetNumberOfEventLogRecords(hand)
 
+        evtmgr.hostname = socket.gethostname()
+        evtmgr.username = getpass.getuser()
+
         # This while must stop when service is stopped #
         while self.keepAlive():
             curr_check = win32evtlog.GetNumberOfEventLogRecords(hand)
@@ -74,10 +77,10 @@ class SiemService(win32serviceutil.ServiceFramework):
                     evtmgr.src = event.SourceName
                     evtmgr.cat = event.EventCategory
                     data = event.StringInserts
+                    data_list = evtmgr.dataList
                     if data:
                         for msg in data:
-                            data_input = evtmgr.dataList.add()
-                            data_input.data = msg
+                            data_list.append(msg)
                     last_check = curr_check
 
 
