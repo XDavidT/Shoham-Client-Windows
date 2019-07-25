@@ -40,6 +40,7 @@ class SiemService(win32serviceutil.ServiceFramework):
         evtMgr = evtmanager_pb2.evtMgr()
         threads = list()    # Must declare to use
         # Start socket
+
         try:
             for log_type in cat_to_run:
                 curr_thr = threading.Thread(target=self.GetEvents,args=(evtMgr,log_type))
