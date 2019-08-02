@@ -1,10 +1,14 @@
 syntax = "proto3";
 import "google/protobuf/timestamp.proto";
 
-service Pusher{
-  rpc PushLog(evtMgr) returns(ack) {}
+service informationExchange{
+  rpc PushLog(evtMgr) returns(ack) {}   // send events to Logger
+  rpc getInfo(ack) returns(information) {} // get category from Logger
 }
 
+message information{
+  repeated string category = 1;
+}
 message evtMgr {
   int64 id = 1;
   google.protobuf.Timestamp time = 2;  // Unique ID number for this person.

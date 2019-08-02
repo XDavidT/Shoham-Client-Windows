@@ -1,6 +1,7 @@
 import ctypes, sys  # Must have to run as Administrator
 import servicemanager, win32event, win32service,win32serviceutil,win32evtlog
 import threading
+import clientConnection
 import socket,getpass,platform
 import grpc
 from ProtoBuf import evtmanager_pb2_grpc,evtmanager_pb2
@@ -19,10 +20,10 @@ def is_admin():
 
 def openStream(self):
     # open a gRPC channel
-    channel = grpc.insecure_channel(':50051')
+    channel = grpc.insecure_channel('192.168.0.123:50051')
 
     # create a stub (client)
-    stub = evtmanager_pb2_grpc.PusherStub(channel)
+    stub = evtmanager_pb2_grpc.informationExchangeStub(channel)
     return stub
 
 class SiemService(win32serviceutil.ServiceFramework):
@@ -43,16 +44,19 @@ class SiemService(win32serviceutil.ServiceFramework):
     def SvcDoRun(self):
         self.ReportServiceStatus(win32service.SERVICE_START_PENDING)    # Status: Service Starting.....
         self.alive = True
+        connet = clientConnection.connection()     # open connection to Logger
         servicemanager.LogMsg(servicemanager.EVENTLOG_INFORMATION_TYPE,
                               servicemanager.PYS_SERVICE_STARTED,
                               (self._svc_name_, ''))
-        cat_to_run = ['Security', 'System']  # need to get from outside
+
+        cat_to_run = connet.getCategory()
         evtMgr = evtmanager_pb2.evtMgr()
         threads = list()    # Must declare to use
+
         # Start socket
         try:
             for log_type in cat_to_run:
-                curr_thr = threading.Thread(target=self.GetEvents,args=(evtMgr,log_type))
+                curr_thr = threading.Thread(target=self.GetEvents,args=(evtMgr,log_type,connet))
                 threads.append(curr_thr)
                 curr_thr.start()
         except:  # When it fail, pop-up massage will
@@ -66,10 +70,9 @@ class SiemService(win32serviceutil.ServiceFramework):
         # Stop socket
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
 
-    def GetEvents(self, evtmgr, log_type):
+    def GetEvents(self, evtmgr, log_type,connet):
         self.clearEvt(log_type)
         hand = win32evtlog.OpenEventLog("localhost", log_type)  # Handle the connection to EventViewer
-        serverConnection = openStream()         # open connection to Logger
         flags = win32evtlog.EVENTLOG_FORWARDS_READ | win32evtlog.EVENTLOG_SEQUENTIAL_READ
         last_check = win32evtlog.GetNumberOfEventLogRecords(hand)
 
@@ -94,7 +97,8 @@ class SiemService(win32serviceutil.ServiceFramework):
                         for msg in data:
                             data_list.append(msg)
                     last_check = curr_check
-                    serverConnection.PushLog(evtmgr)
+                    connet.sendEvent(evtmgr)
+
     def clearEvt(self,log_type):
         hand = win32evtlog.OpenEventLog("localhost", log_type)  # Handle the Event Viewer
         win32evtlog.ClearEventLog(hand, None)
