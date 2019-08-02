@@ -2,7 +2,9 @@ import ctypes, sys  # Must have to run as Administrator
 import servicemanager, win32event, win32service,win32serviceutil,win32evtlog
 import threading
 import socket,getpass,platform
-import evtmanager_pb2
+import grpc
+from ProtoBuf import evtmanager_pb2_grpc,evtmanager_pb2
+
 SIEM_NAME = "My Service Name"
 SIEM_SRV_NAME = "MyServiceName"
 
@@ -14,6 +16,14 @@ def is_admin():
         return ctypes.windll.shell32.IsUserAnAdmin()  # Check if user admin
     except:
         return False
+
+def openStream(self):
+    # open a gRPC channel
+    channel = grpc.insecure_channel(':50051')
+
+    # create a stub (client)
+    stub = evtmanager_pb2_grpc.PusherStub(channel)
+    return stub
 
 class SiemService(win32serviceutil.ServiceFramework):
     _svc_name_ = SIEM_SRV_NAME
@@ -40,7 +50,6 @@ class SiemService(win32serviceutil.ServiceFramework):
         evtMgr = evtmanager_pb2.evtMgr()
         threads = list()    # Must declare to use
         # Start socket
-
         try:
             for log_type in cat_to_run:
                 curr_thr = threading.Thread(target=self.GetEvents,args=(evtMgr,log_type))
@@ -59,7 +68,8 @@ class SiemService(win32serviceutil.ServiceFramework):
 
     def GetEvents(self, evtmgr, log_type):
         self.clearEvt(log_type)
-        hand = win32evtlog.OpenEventLog("localhost", log_type)  # Handle the connection
+        hand = win32evtlog.OpenEventLog("localhost", log_type)  # Handle the connection to EventViewer
+        serverConnection = openStream()         # open connection to Logger
         flags = win32evtlog.EVENTLOG_FORWARDS_READ | win32evtlog.EVENTLOG_SEQUENTIAL_READ
         last_check = win32evtlog.GetNumberOfEventLogRecords(hand)
 
@@ -84,15 +94,14 @@ class SiemService(win32serviceutil.ServiceFramework):
                         for msg in data:
                             data_list.append(msg)
                     last_check = curr_check
-
-
-
+                    serverConnection.PushLog(evtmgr)
     def clearEvt(self,log_type):
         hand = win32evtlog.OpenEventLog("localhost", log_type)  # Handle the Event Viewer
         win32evtlog.ClearEventLog(hand, None)
 
     def keepAlive(self):    # Manage the thread's
         return self.alive
+
 
 
 # + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +#
@@ -116,3 +125,4 @@ if __name__ == '__main__':
         win32serviceutil.HandleCommandLine(SiemService)
 else:
     win32serviceutil.HandleCommandLine(SiemService)
+

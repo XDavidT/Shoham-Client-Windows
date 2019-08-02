@@ -1,20 +1,8 @@
 syntax = "proto3";
 import "google/protobuf/timestamp.proto";
 
-service categoryExchange {
-  //request info from logger like IP,category to filter
-  rpc getInformation (infoRequest) returns (infoReply) {}
-  //send\get events
-  rpc events (evtMgr) returns (getEvents) {}
-}
-
-message infoRequest{
-  bool information =1;
-}
-
-message infoReply{
-  string category=1;
-  int32 logger_IP=2;
+service Pusher{
+  rpc PushLog(evtMgr) returns(ack) {}
 }
 
 message evtMgr {
@@ -29,8 +17,8 @@ message evtMgr {
   string username = 8;
   string os = 9;
 }
-
-message getEvents{
+message ack{
+  bool isDeliver = 1;
 }
 //protoc --proto_path=ProtoBuf --python_out=./ ProtoBuf/evtmanager.proto
 //Added to github
