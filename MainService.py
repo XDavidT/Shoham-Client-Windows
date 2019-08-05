@@ -96,7 +96,7 @@ class SiemService(win32serviceutil.ServiceFramework):
                         for msg in data:
                             data_list.append(msg)
                     # Push log return true if completed
-                    if(stub.PushLog(evtmgr)):   # Debug in gRPC to return value
+                    if(stub.PushLog(evtmgr).isDeliver):   # Debug in gRPC to return value
                         last_check = curr_check
                     else:
                         print("error pushing %d" % evtmgr.id) # Debug print
