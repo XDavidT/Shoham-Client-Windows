@@ -2,7 +2,7 @@ import ctypes, sys  # Must have to run as Administrator
 import servicemanager, win32event, win32service,win32serviceutil,win32evtlog
 import threading
 import socket,getpass,platform
-import grpc
+import grpc, time
 from ProtoBuf import evtmanager_pb2_grpc,evtmanager_pb2
 
 SIEM_NAME = "My Service Name"
@@ -65,7 +65,9 @@ class SiemService(win32serviceutil.ServiceFramework):
                     thread.join()
                 channel.close()
         except:
-            print("Error in connection (to open stub)")
+            print("Error in connection (to open stub)\nRetry in 3 second")
+            time.sleep(3)
+            return self.SvcDoRun()
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
 
     def GetEvents(self, evtmgr, log_type,stub):
@@ -75,6 +77,7 @@ class SiemService(win32serviceutil.ServiceFramework):
         last_check = win32evtlog.GetNumberOfEventLogRecords(hand)
 
         evtmgr.hostname = socket.gethostname()  # Using Socket we can know the PC name
+        evtmgr.ip_add = socket.gethostbyname(evtmgr.hostname)
         evtmgr.username = getpass.getuser()     # Using getpass we can know what user is current using
         evtmgr.os = platform.system()           # Using platform to get OS brand
         print("%s is up and running !" % log_type) # Debug print

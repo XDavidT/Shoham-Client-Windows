@@ -18,8 +18,9 @@ message evtMgr {
   repeated string dataList = 6; //data content
 
   string hostname = 7;
-  string username = 8;
-  string os = 9;
+  string ip_add = 8;
+  string username = 9;
+  string os = 10;
 }
 message ack{
   bool isDeliver = 1;
