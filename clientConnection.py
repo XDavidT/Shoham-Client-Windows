@@ -8,13 +8,13 @@ class connection():
             self.channel = grpc.insecure_channel('localhost:50051')
             self.stub = evtmanager_pb2_grpc.informationExchangeStub(self.channel)
         except:
-            print("Eror client connection")
+            print("Eror in client connection")
 
     def getCategory(self):
         try:
             return self.stub.getInfo(evtmanager_pb2.ack(isDeliver=True))
         except:
-            print("Eror Category")
+            print("Eror in Category")
     def sendEvent(self, evt):
         self.stub.PushLog(evt)
         print("event sent")

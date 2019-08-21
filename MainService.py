@@ -57,9 +57,9 @@ class SiemService(win32serviceutil.ServiceFramework):
                     threads.append(curr_thr)
                     curr_thr.start()
             except:  # When it fail, pop-up massage will
-                print("error in thread")    # Debug print
+                print("error in thread.")    # Debug print
             self.ReportServiceStatus(win32service.SERVICE_RUNNING)          # Status: Service Running
-            print("Service is running !")   # Debug print
+            print("Service is running !!")   # Debug print
 
             # --- From here service wait to "stop" command --- #
             rc = None
