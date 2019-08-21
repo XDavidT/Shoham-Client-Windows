@@ -1,8 +1,11 @@
 import ctypes, sys  # Must have to run as Administrator
+import time
+
 import servicemanager, win32event, win32service,win32serviceutil,win32evtlog
 import threading
 import socket,getpass,platform
 import grpc
+from clientConnection import *
 from ProtoBuf import evtmanager_pb2_grpc,evtmanager_pb2
 
 SIEM_NAME = "My Service Name"
@@ -42,30 +45,34 @@ class SiemService(win32serviceutil.ServiceFramework):
         evtMgr = evtmanager_pb2.evtMgr()    # Proto
         threads = list()    # Must declare to use thread list
 
-        try:    #   This 'try' is locate problems in connection
-            with grpc.insecure_channel('localhost:50051') as channel:       # Open Socket (gRPC)
-                stub = evtmanager_pb2_grpc.informationExchangeStub(channel)
-                informationMsg = stub.getInfo(evtmanager_pb2.ack(isDeliver=True))   # Server side function
-                cat_to_run = informationMsg.category                                # Return category list
-                try:
-                    for log_type in cat_to_run:                                     # Open thread by log types
-                        curr_thr = threading.Thread(target=self.GetEvents,args=(evtMgr,log_type,stub))
-                        threads.append(curr_thr)
-                        curr_thr.start()
-                except:  # When it fail, pop-up massage will
-                    print("error in thread")    # Debug print
-                self.ReportServiceStatus(win32service.SERVICE_RUNNING)          # Status: Service Running
-                print("Service is running !")   # Debug print
+        try:   #   This 'try' is locate problems in connection
 
-                # --- From here service wait to "stop" command --- #
-                rc = None
-                while rc != win32event.WAIT_OBJECT_0:  # Wait until the "Stop"
-                    rc = win32event.WaitForSingleObject(self.hWaitStop, 5000)
-                for thread in threads:  # If service was stopped, close all threads
-                    thread.join()
-                channel.close()
+            con = connection()     # Open Socket (gRPC)
+            informationMsg = con.getCategory()   # Server side function
+            cat_to_run = informationMsg.category                                # Return category list
+
+            try:
+                for log_type in cat_to_run:                                     # Open thread by log types
+                    curr_thr = threading.Thread(target=self.GetEvents,args=(evtMgr,log_type,con.stub))
+                    threads.append(curr_thr)
+                    curr_thr.start()
+            except:  # When it fail, pop-up massage will
+                print("error in thread")    # Debug print
+            self.ReportServiceStatus(win32service.SERVICE_RUNNING)          # Status: Service Running
+            print("Service is running !")   # Debug print
+
+            # --- From here service wait to "stop" command --- #
+            rc = None
+            while rc != win32event.WAIT_OBJECT_0:  # Wait until the "Stop"
+                rc = win32event.WaitForSingleObject(self.hWaitStop, 5000)
+            for thread in threads:  # If service was stopped, close all threads
+                thread.join()
+            con.shutdown()
+
         except:
-            print("Error in connection (to open stub)")
+            print("Error in connection (to open stub)\nRetry in 3 second")
+            time.sleep(3)
+            return self.SvcDoRun()
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
 
     def GetEvents(self, evtmgr, log_type,stub):
@@ -109,7 +116,7 @@ class SiemService(win32serviceutil.ServiceFramework):
         return self.alive
 
 # + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +#
-# pyinstaller -F --hidden-import=win32timezone --hidden-import=pkg_resources --name=MyService MainService.py Protobuf/evtmanager_pb2.py ProtoBuf/evtmanager_pb2_grpc.py
+# pyinstaller -F --hidden-import=win32timezone --hidden-import=pkg_resources --name=MyService MainService.py clientConnection.py Protobuf/evtmanager_pb2.py ProtoBuf/evtmanager_pb2_grpc.py
 
 # Program Declaration
 # Step 1 - Start from main
