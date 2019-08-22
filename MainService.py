@@ -84,6 +84,7 @@ class SiemService(win32serviceutil.ServiceFramework):
         evtmgr.hostname = socket.gethostname()  # Using Socket we can know the PC name
         evtmgr.username = getpass.getuser()     # Using getpass we can know what user is current using
         evtmgr.os = platform.system()           # Using platform to get OS brand
+        evtmgr.ip_add = socket.gethostbyname(evtmgr.hostname) # Get the IP Address from socket
         print("%s is up and running !" % log_type) # Debug print
 
         # ! Important: This while must stop when service is stopped ! #
