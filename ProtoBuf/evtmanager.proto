@@ -21,6 +21,7 @@ message evtMgr {
   string ip_add = 8;
   string username = 9;
   string os = 10;
+  string mac_add = 11;
 }
 message ack{
   bool isDeliver = 1;

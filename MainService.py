@@ -7,6 +7,7 @@ import socket,getpass,platform
 import grpc
 from clientConnection import *
 from ProtoBuf import evtmanager_pb2_grpc,evtmanager_pb2
+from getmac import get_mac_address
 
 SIEM_NAME = "My Service Name"
 SIEM_SRV_NAME = "MyServiceName"
@@ -85,6 +86,7 @@ class SiemService(win32serviceutil.ServiceFramework):
         evtmgr.username = getpass.getuser()     # Using getpass we can know what user is current using
         evtmgr.os = platform.system()           # Using platform to get OS brand
         evtmgr.ip_add = socket.gethostbyname(evtmgr.hostname) # Get the IP Address from socket
+        evtmgr.mac_add = get_mac_address(ip=(socket.gethostbyname(evtmgr.hostname))) # Get the MAC Address
         print("%s is up and running !" % log_type) # Debug print
 
         # ! Important: This while must stop when service is stopped ! #
