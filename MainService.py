@@ -95,11 +95,11 @@ class SiemService(win32serviceutil.ServiceFramework):
             if curr_check > last_check:
                 events = win32evtlog.ReadEventLog(hand, flags, curr_check)
                 for event in events:
-                    evtmgr.id = event.EventID
+                    evtmgr.id = str(event.EventID)
                     evtmgr.time.FromDatetime(event.TimeGenerated)
-                    evtmgr.type = event.EventType
+                    evtmgr.type = str(event.EventType)
                     evtmgr.src = event.SourceName
-                    evtmgr.cat = event.EventCategory
+                    evtmgr.cat = str(event.EventCategory)
                     data = event.StringInserts
                     data_list = evtmgr.dataList
                     if data:
