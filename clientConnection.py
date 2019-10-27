@@ -5,10 +5,14 @@ class connection():
 
     def __init__(self):
         try:
-            self.channel = grpc.insecure_channel('localhost:50051')
+            with open("server.crt",'rb') as f:
+                creds = f.read()
+            credentials = grpc.ssl_channel_credentials(root_certificates=creds)
+            self.channel = grpc.secure_channel('localhost:50051',credentials)
             self.stub = evtmanager_pb2_grpc.informationExchangeStub(self.channel)
-        except:
+        except Exception as e:
             print("Eror in client connection")
+            print(e)
 
     def getCategory(self):
         try:
