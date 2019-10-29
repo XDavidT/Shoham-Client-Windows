@@ -24,6 +24,11 @@ class informationExchangeStub(object):
         request_serializer=evtmanager__pb2.ack.SerializeToString,
         response_deserializer=evtmanager__pb2.information.FromString,
         )
+    self.PushClientReports = channel.unary_unary(
+        '/informationExchange/PushClientReports',
+        request_serializer=evtmanager__pb2.ClientReport.SerializeToString,
+        response_deserializer=evtmanager__pb2.ack.FromString,
+        )
 
 
 class informationExchangeServicer(object):
@@ -44,6 +49,13 @@ class informationExchangeServicer(object):
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
 
+  def PushClientReports(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
 
 def add_informationExchangeServicer_to_server(servicer, server):
   rpc_method_handlers = {
@@ -56,6 +68,11 @@ def add_informationExchangeServicer_to_server(servicer, server):
           servicer.getInfo,
           request_deserializer=evtmanager__pb2.ack.FromString,
           response_serializer=evtmanager__pb2.information.SerializeToString,
+      ),
+      'PushClientReports': grpc.unary_unary_rpc_method_handler(
+          servicer.PushClientReports,
+          request_deserializer=evtmanager__pb2.ClientReport.FromString,
+          response_serializer=evtmanager__pb2.ack.SerializeToString,
       ),
   }
   generic_handler = grpc.method_handlers_generic_handler(

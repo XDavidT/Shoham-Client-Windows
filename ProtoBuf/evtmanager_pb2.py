@@ -21,7 +21,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x10\x65vtmanager.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\x1f\n\x0binformation\x12\x10\n\x08\x63\x61tegory\x18\x01 \x03(\t\"\xc9\x01\n\x06\x65vtMgr\x12\n\n\x02id\x18\x01 \x01(\t\x12(\n\x04time\x18\x02 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12\x0c\n\x04type\x18\x03 \x01(\t\x12\x0b\n\x03src\x18\x04 \x01(\t\x12\x0b\n\x03\x63\x61t\x18\x05 \x01(\t\x12\x10\n\x08\x64\x61taList\x18\x06 \x03(\t\x12\x10\n\x08hostname\x18\x07 \x01(\t\x12\x0e\n\x06ip_add\x18\x08 \x01(\t\x12\x10\n\x08username\x18\t \x01(\t\x12\n\n\x02os\x18\n \x01(\t\x12\x0f\n\x07mac_add\x18\x0b \x01(\t\"\x18\n\x03\x61\x63k\x12\x11\n\tisDeliver\x18\x01 \x01(\x08\x32R\n\x13informationExchange\x12\x1a\n\x07PushLog\x12\x07.evtMgr\x1a\x04.ack\"\x00\x12\x1f\n\x07getInfo\x12\x04.ack\x1a\x0c.information\"\x00\x62\x06proto3')
+  serialized_pb=_b('\n\x10\x65vtmanager.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\x1f\n\x0binformation\x12\x10\n\x08\x63\x61tegory\x18\x01 \x03(\t\"\xc9\x01\n\x06\x65vtMgr\x12\n\n\x02id\x18\x01 \x01(\t\x12(\n\x04time\x18\x02 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12\x0c\n\x04type\x18\x03 \x01(\t\x12\x0b\n\x03src\x18\x04 \x01(\t\x12\x0b\n\x03\x63\x61t\x18\x05 \x01(\t\x12\x10\n\x08\x64\x61taList\x18\x06 \x03(\t\x12\x10\n\x08hostname\x18\x07 \x01(\t\x12\x0e\n\x06ip_add\x18\x08 \x01(\t\x12\x10\n\x08username\x18\t \x01(\t\x12\n\n\x02os\x18\n \x01(\t\x12\x0f\n\x07mac_add\x18\x0b \x01(\t\"\x18\n\x03\x61\x63k\x12\x11\n\tisDeliver\x18\x01 \x01(\x08\"-\n\x0c\x43lientReport\x12\x0c\n\x04head\x18\x01 \x01(\t\x12\x0f\n\x07\x64\x65tails\x18\x02 \x01(\t2~\n\x13informationExchange\x12\x1a\n\x07PushLog\x12\x07.evtMgr\x1a\x04.ack\"\x00\x12\x1f\n\x07getInfo\x12\x04.ack\x1a\x0c.information\"\x00\x12*\n\x11PushClientReports\x12\r.ClientReport\x1a\x04.ack\"\x00\x62\x06proto3')
   ,
   dependencies=[google_dot_protobuf_dot_timestamp__pb2.DESCRIPTOR,])
 
@@ -190,10 +190,49 @@ _ACK = _descriptor.Descriptor(
   serialized_end=314,
 )
 
+
+_CLIENTREPORT = _descriptor.Descriptor(
+  name='ClientReport',
+  full_name='ClientReport',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='head', full_name='ClientReport.head', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='details', full_name='ClientReport.details', index=1,
+      number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=316,
+  serialized_end=361,
+)
+
 _EVTMGR.fields_by_name['time'].message_type = google_dot_protobuf_dot_timestamp__pb2._TIMESTAMP
 DESCRIPTOR.message_types_by_name['information'] = _INFORMATION
 DESCRIPTOR.message_types_by_name['evtMgr'] = _EVTMGR
 DESCRIPTOR.message_types_by_name['ack'] = _ACK
+DESCRIPTOR.message_types_by_name['ClientReport'] = _CLIENTREPORT
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 information = _reflection.GeneratedProtocolMessageType('information', (_message.Message,), {
@@ -217,6 +256,13 @@ ack = _reflection.GeneratedProtocolMessageType('ack', (_message.Message,), {
   })
 _sym_db.RegisterMessage(ack)
 
+ClientReport = _reflection.GeneratedProtocolMessageType('ClientReport', (_message.Message,), {
+  'DESCRIPTOR' : _CLIENTREPORT,
+  '__module__' : 'evtmanager_pb2'
+  # @@protoc_insertion_point(class_scope:ClientReport)
+  })
+_sym_db.RegisterMessage(ClientReport)
+
 
 
 _INFORMATIONEXCHANGE = _descriptor.ServiceDescriptor(
@@ -225,8 +271,8 @@ _INFORMATIONEXCHANGE = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=0,
   serialized_options=None,
-  serialized_start=316,
-  serialized_end=398,
+  serialized_start=363,
+  serialized_end=489,
   methods=[
   _descriptor.MethodDescriptor(
     name='PushLog',
@@ -244,6 +290,15 @@ _INFORMATIONEXCHANGE = _descriptor.ServiceDescriptor(
     containing_service=None,
     input_type=_ACK,
     output_type=_INFORMATION,
+    serialized_options=None,
+  ),
+  _descriptor.MethodDescriptor(
+    name='PushClientReports',
+    full_name='informationExchange.PushClientReports',
+    index=2,
+    containing_service=None,
+    input_type=_CLIENTREPORT,
+    output_type=_ACK,
     serialized_options=None,
   ),
 ])

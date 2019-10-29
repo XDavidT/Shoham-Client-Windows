@@ -2,9 +2,11 @@ syntax = "proto3";
 import "google/protobuf/timestamp.proto";
 
 service informationExchange{
-  rpc PushLog(evtMgr) returns(ack) {}   // send events to Logger
+  rpc PushLog(evtMgr) returns(ack) {}     // send events to Logger
   rpc getInfo(ack) returns(information) {} // get category from Logger
+  rpc PushClientReports(ClientReport) returns(ack) {}
 }
+
 
 message information{
   repeated string category = 1;
@@ -25,6 +27,11 @@ message evtMgr {
 }
 message ack{
   bool isDeliver = 1;
+}
+
+message ClientReport{
+  string head = 1;
+  string details = 2;
 }
 //protoc --proto_path=ProtoBuf --python_out=ProtoBuf ProtoBuf/evtmanager.proto
 //python -m grpc_tools.protoc -I./ProtoBuf --python_out=ProtoBuf --grpc_python_out=ProtoBuf ProtoBuf/evtmanager.proto

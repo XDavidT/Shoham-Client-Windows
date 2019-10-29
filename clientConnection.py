@@ -5,10 +5,10 @@ class connection():
 
     def __init__(self):
         try:
-            with open("server.crt",'rb') as f:
+            with open("c:\server.crt",'rb') as f:
                 creds = f.read()
             credentials = grpc.ssl_channel_credentials(root_certificates=creds)
-            self.channel = grpc.secure_channel('localhost:50051',credentials)
+            self.channel = grpc.secure_channel('logger.davidt.net:50051',credentials)
             self.stub = evtmanager_pb2_grpc.informationExchangeStub(self.channel)
         except Exception as e:
             print("Eror in client connection")
@@ -25,3 +25,8 @@ class connection():
 
     def shutdown(self):
         self.channel.close()
+
+    def send_client_logs(self,header,details):
+        client_report = evtmanager_pb2.ClientReport()
+        client_report.head = header
+        client_report.details = details
