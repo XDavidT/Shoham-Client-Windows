@@ -9,18 +9,10 @@ from clientConnection import *
 from ProtoBuf import evtmanager_pb2_grpc,evtmanager_pb2
 from getmac import get_mac_address
 
-SIEM_NAME = "My Service Name"
-SIEM_SRV_NAME = "MyServiceName"
+SIEM_NAME = "Siem Example"
+SIEM_SRV_NAME = "SiemExample"
 
 #   Function Declaration  #
-
-# # Run ad admin
-# def is_admin():
-#     try:
-#         return ctypes.windll.shell32.IsUserAnAdmin()  # Check if user admin
-#     except:
-#         return False
-
 class SiemService(win32serviceutil.ServiceFramework):
     _svc_name_ = SIEM_SRV_NAME
     _svc_display_name_ = SIEM_NAME
@@ -128,9 +120,9 @@ class SiemService(win32serviceutil.ServiceFramework):
 
 # + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +#
 # pyinstaller -F --hidden-import=win32timezone --hidden-import=pkg_resources --name=MyService MainService.py clientConnection.py Protobuf/evtmanager_pb2.py ProtoBuf/evtmanager_pb2_grpc.py
-
+#myservice.exe --startup=auto install
 # Program Declaration
-# Step 1 - Start from main
+
 if __name__ == '__main__':
     # Step 2 checking for arguments got in command line
     if len(sys.argv) == 1:
