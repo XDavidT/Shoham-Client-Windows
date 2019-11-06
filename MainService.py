@@ -23,6 +23,7 @@ class SiemService(win32serviceutil.ServiceFramework):
         win32serviceutil.ServiceFramework.__init__(self, args)
         self.hWaitStop = win32event.CreateEvent(None, 0, 0, None)
         self.alive = None
+        self.nextTry = 1
 
     def SvcStop(self):
         self.alive = False
@@ -36,7 +37,8 @@ class SiemService(win32serviceutil.ServiceFramework):
         # Check if we have any connection problems
         try:
             conn = connection()     # Open Socket (gRPC)
-            self.send_report(conn.stub,"Information Message","Device connected: " + self._station_name_)
+            self.send_report(conn.stub,"Information Message","Device connected: " + self._station_name_+
+                             " After waiting "+str(self.nextTry) +" seconds")
 
             informationMsg = conn.getCategory()           # Server side function
             cat_to_run = informationMsg.category          # Return category list
@@ -63,10 +65,11 @@ class SiemService(win32serviceutil.ServiceFramework):
             self.send_report(conn.stub,"Information Message", "Device stopping connection: "+self._station_name_)
             conn.shutdown()
         except Exception as error_massage:
-            print("Error in connection (to open stub)\n")
+            print("Error in connection (to open stub)\nNext try in next %d seconds\n Error massage:\n" % self.nextTry)
             print(error_massage)
-            # time.sleep(60)
-            # return self.SvcDoRun()
+            time.sleep(self.nextTry)
+            self.nextTry *= 2
+            return self.SvcDoRun()
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
 
     def GetEvents(self, evtmgr, log_type,stub):

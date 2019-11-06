@@ -8,7 +8,7 @@ class connection():
             with open("c:\server.crt",'rb') as f:
                 creds = f.read()
             credentials = grpc.ssl_channel_credentials(root_certificates=creds)
-            self.channel = grpc.secure_channel('logger.davidt.net:50051',credentials)
+            self.channel = grpc.secure_channel('siem.davidt.net:50051',credentials)
             self.stub = evtmanager_pb2_grpc.informationExchangeStub(self.channel)
         except Exception as e:
             print("Eror in client connection")
