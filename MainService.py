@@ -9,8 +9,8 @@ from clientConnection import *
 from ProtoBuf import evtmanager_pb2_grpc,evtmanager_pb2
 from getmac import get_mac_address
 
-SIEM_NAME = "Siem Example"
-SIEM_SRV_NAME = "SiemExample"
+SIEM_NAME = "SiemClient"
+SIEM_SRV_NAME = "SiemClient"
 
 #   Function Declaration  #
 class SiemService(win32serviceutil.ServiceFramework):
@@ -122,8 +122,8 @@ class SiemService(win32serviceutil.ServiceFramework):
         return self.alive
 
 # + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +#
-# pyinstaller -F --hidden-import=win32timezone --hidden-import=pkg_resources --name=MyService MainService.py clientConnection.py Protobuf/evtmanager_pb2.py ProtoBuf/evtmanager_pb2_grpc.py
-#myservice.exe --startup=auto install
+# pyinstaller -F --hidden-import=win32timezone --hidden-import=pkg_resources --name=SiemClient MainService.py clientConnection.py Protobuf/evtmanager_pb2.py ProtoBuf/evtmanager_pb2_grpc.py
+#SiemClient.exe --startup=auto install
 # Program Declaration
 
 if __name__ == '__main__':

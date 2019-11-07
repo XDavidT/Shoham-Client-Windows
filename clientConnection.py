@@ -5,7 +5,7 @@ class connection():
 
     def __init__(self):
         try:
-            with open("c:\server.crt",'rb') as f:
+            with open("c:\Program Files\Siem\server.crt",'rb') as f:
                 creds = f.read()
             credentials = grpc.ssl_channel_credentials(root_certificates=creds)
             self.channel = grpc.secure_channel('siem.davidt.net:50051',credentials)
