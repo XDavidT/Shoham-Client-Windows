@@ -9,8 +9,8 @@ from clientConnection import *
 from ProtoBuf import evtmanager_pb2_grpc,evtmanager_pb2
 from getmac import get_mac_address
 
-SIEM_NAME = "SiemClient"
-SIEM_SRV_NAME = "SiemClient"
+SIEM_NAME = "Shoham"
+SIEM_SRV_NAME = "Secure host and monitoring"
 
 #   Function Declaration  #
 class SiemService(win32serviceutil.ServiceFramework):
