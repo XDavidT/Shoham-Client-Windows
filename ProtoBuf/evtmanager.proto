@@ -32,6 +32,8 @@ message ack{
 message ClientReport{
   string head = 1;
   string details = 2;
+  string hostname = 3;
+
 }
 //protoc --proto_path=ProtoBuf --python_out=ProtoBuf ProtoBuf/evtmanager.proto
 //python -m grpc_tools.protoc -I./ProtoBuf --python_out=ProtoBuf --grpc_python_out=ProtoBuf ProtoBuf/evtmanager.proto

@@ -37,8 +37,7 @@ class SiemService(win32serviceutil.ServiceFramework):
         # Check if we have any connection problems
         try:
             conn = connection()     # Open Socket (gRPC)
-            self.send_report(conn.stub,"Information Message","Device connected: " + self._station_name_+
-                             " After waiting "+str(self.nextTry) +" seconds")
+            self.send_report(conn.stub,"Information Message","Device connected")
 
             informationMsg = conn.getCategory()           # Server side function
             cat_to_run = informationMsg.category          # Return category list
@@ -51,18 +50,17 @@ class SiemService(win32serviceutil.ServiceFramework):
                     threads.append(curr_thr)
                     curr_thr.start()
             except Exception as error_massage:  # When it fail, pop-up massage will
-                self.send_report(conn.stub, "Error Message", "Thread fail in device: "+self._station_name_
-                                 + "\n" + str(error_massage))
+                self.send_report(conn.stub, "Error Message", "Thread fail " + "\n" + str(error_massage))
 
             self.ReportServiceStatus(win32service.SERVICE_RUNNING)          # Status: Service Running
-            self.send_report(conn.stub,"Information Message","Service Started: "+self._station_name_)
+            self.send_report(conn.stub,"Information Message","Service Started")
             # --- From here service wait to "stop" command --- #
             rc = None
             while rc != win32event.WAIT_OBJECT_0:  # Wait until the "Stop"
                 rc = win32event.WaitForSingleObject(self.hWaitStop, 5000)
             for thread in threads:  # If service was stopped, close all threads
                 thread.join()
-            self.send_report(conn.stub,"Information Message", "Device stopping connection: "+self._station_name_)
+            self.send_report(conn.stub,"Information Message", "Device stopping connection")
             conn.shutdown()
         except Exception as error_massage:
             print("Error in connection (to open stub)\nNext try in next %d seconds\n Error massage:\n" % self.nextTry)
@@ -77,7 +75,7 @@ class SiemService(win32serviceutil.ServiceFramework):
         hand = win32evtlog.OpenEventLog("localhost", log_type)  # Handle the connection to EventViewer
         flags = win32evtlog.EVENTLOG_FORWARDS_READ | win32evtlog.EVENTLOG_SEQUENTIAL_READ
         last_check = win32evtlog.GetNumberOfEventLogRecords(hand)
-        self.send_report(stub,"Information Message", "Thread "+log_type + " start to run on: " + self._station_name_)
+        self.send_report(stub,"Information Message", "Thread "+log_type + " start to run")
 
         evtmgr.hostname = self._station_name_  # Using Socket we can know the PC name
         evtmgr.username = getpass.getuser()     # Using getpass we can know what user is current using
@@ -106,7 +104,7 @@ class SiemService(win32serviceutil.ServiceFramework):
                         last_check = curr_check
                     else:
                         self.send_report(stub, "Error Message",
-                                         "Thread " + log_type + " fail to push from device: " + self._station_name_)
+                                         "Thread " + log_type + " fail to push from device")
 
     def clearEvt(self,log_type):
         hand = win32evtlog.OpenEventLog("localhost", log_type)  # Handle the Event Viewer
@@ -116,6 +114,7 @@ class SiemService(win32serviceutil.ServiceFramework):
         report = evtmanager_pb2.ClientReport()
         report.head = head
         report.details = desc
+        report.hostname = self._station_name_
         stub.PushClientReports(report)
 
     def keepAlive(self):    # Manage the thread's

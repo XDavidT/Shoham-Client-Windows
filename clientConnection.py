@@ -26,7 +26,8 @@ class connection():
     def shutdown(self):
         self.channel.close()
 
-    def send_client_logs(self,header,details):
+    def send_client_logs(self,header,details,hostname):
         client_report = evtmanager_pb2.ClientReport()
         client_report.head = header
         client_report.details = details
+        client_report.hostname = hostname
