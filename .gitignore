@@ -5,3 +5,5 @@ ProtoBuf/evtmanager_pb2_grpc.py
 MyService.spec
 /.idea/*
 Shoham installation
+/dist/
+/Shoham.spec
