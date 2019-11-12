@@ -122,8 +122,8 @@ class SiemService(win32serviceutil.ServiceFramework):
         return self.alive
 
 # + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +#
-# pyinstaller -F --hidden-import=win32timezone --hidden-import=pkg_resources --name=SiemClient MainService.py clientConnection.py Protobuf/evtmanager_pb2.py ProtoBuf/evtmanager_pb2_grpc.py
-#SiemClient.exe --startup=auto install
+# pyinstaller -F --hidden-import=win32timezone --hidden-import=pkg_resources --hidden-import=["pywt","pywt._estentions._cwt"] --name=Shoham MainService.py clientConnection.py Protobuf/evtmanager_pb2.py ProtoBuf/evtmanager_pb2_grpc.py
+#Shoham.exe --startup=auto install
 # Program Declaration
 
 if __name__ == '__main__':
