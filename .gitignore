@@ -1,8 +1,6 @@
 build
-dist/MyService.exe
 ProtoBuf/evtmanager_pb2.py
 ProtoBuf/evtmanager_pb2_grpc.py
-MyService.spec
 /.idea/*
 Shoham installation
 /dist/
