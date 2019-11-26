@@ -10,13 +10,13 @@ from ProtoBuf import evtmanager_pb2_grpc,evtmanager_pb2
 from getmac import get_mac_address
 
 SIEM_NAME = "Shoham"
-SIEM_SRV_NAME = "Secure host and monitoring"
+SIEM_SRV_NAME = "Shoham"
 
 #   Function Declaration  #
 class SiemService(win32serviceutil.ServiceFramework):
     _svc_name_ = SIEM_SRV_NAME
     _svc_display_name_ = SIEM_NAME
-    _svc_description_ = 'Python Service Description'
+    _svc_description_ = 'Secure host and monitoring'
     _station_name_= socket.gethostname()
 
     def __init__(self, args):
@@ -96,6 +96,7 @@ class SiemService(win32serviceutil.ServiceFramework):
                     evtmgr.cat = str(event.EventCategory)
                     data = event.StringInserts
                     data_list = evtmgr.dataList
+
                     if data:
                         for msg in data:
                             data_list.append(msg)
